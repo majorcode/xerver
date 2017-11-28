@@ -1,6 +1,6 @@
 xerver v3.1
 ============
-A transparent blazing fast fastcgi reverse proxy .
+A transparent blazing fast fastcgi reverse proxy.
 
 Features
 ============
@@ -22,11 +22,11 @@ How It Works
 
 Building from source
 ==================
-1- make sure you have `Golang` installed .  
-2- `go get -u github.com/majorcode/xerver`  
-3- `go install github.com/majorcode/xerver`  
-4- make sure `$GOPATH` in your `$PATH` env var .    
-5- `xerver --help`
+1. Make sure you have `Golang` installed
+2. `go get -u github.com/majorcode/xerver`  
+3. `go install github.com/majorcode/xerver`  
+4. Make sure `$GOPATH` is in your `$PATH` env var
+5. `xerver --help`
 
 Example (1)
 ==============
@@ -37,13 +37,21 @@ xerver --root=/path/to/www/ --http=:80
 
 Example (2)
 ==============
-**Listen on address `0.0.0.0:80`** and send the requests to `./controller.php`  
+Listen on address `0.0.0.0:80` and send the requests to `./controller.php`  
+
 ```bash
 xerver --backend=unix:/var/run/php5-fpm.sock controller=./controller.php --http=:80
 ```
-** OR Listen on address `0.0.0.0:80` & ``0.0.0.0:443`` ** and send the requests to `./controller.php`
+Or listen on address `0.0.0.0:80` & ``0.0.0.0:443`` and send the requests to `./controller.php`
+
 ```bash
-xerver --backend=unix:/var/run/php5-fpm.sock controller=./controller.php --http=:80 --https=:443 --cert=./cert.pem --key=./key.pem
+xerver \
+  --backend=unix:/var/run/php5-fpm.sock \
+  --controller=./controller.php \
+  --http=:80
+  --https=:443
+  --cert=./cert.pem
+  --key=./key.pem
 ```
 
 

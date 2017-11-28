@@ -48,9 +48,9 @@ Or listen on address `0.0.0.0:80` & ``0.0.0.0:443`` and send the requests to `./
 xerver \
   --backend=unix:/var/run/php5-fpm.sock \
   --controller=./controller.php \
-  --http=:80
-  --https=:443
-  --cert=./cert.pem
+  --http=:80 \
+  --https=:443 \
+  --cert=./cert.pem \
   --key=./key.pem
 ```
 

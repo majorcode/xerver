@@ -1,4 +1,4 @@
-xerver v3.0
+xerver v3.1
 ============
 A transparent blazing fast fastcgi reverse proxy .
 

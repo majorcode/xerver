@@ -43,7 +43,7 @@ var (
 
 // system vars
 var (
-	softwareVersion = "xerver/v3.0"
+	softwareVersion = "xerver/v3.1"
 	fcgiProtocol    = ""
 	fcgiAddress     = ""
 )

@@ -13,10 +13,6 @@
 // >> --https       [the local https address to listen on],             i.e ":443"
 // >> --cert        [the ssl cert file path],                           i.e "/var/ssl/ssl.cert"
 // >> --key         [the ssl key file path],                            i.e "/var/ssl/ssl.key"
-// *> available internals
-// >> Xerver-Internal-ServerTokens [off|on]
-// >> Xerver-Internal-FileServer [file|directory]
-// >> Xerver-Internal-ProxyPass [transparent-http-proxy]
 package main
 
 import "os"
@@ -27,9 +23,9 @@ import "net"
 import "flag"
 import "strconv"
 import "strings"
-import "net/url"
+
 import "net/http"
-import "net/http/httputil"
+
 import "github.com/majorcode/fcgi_client"
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -138,40 +134,17 @@ func serveFCGI(res http.ResponseWriter, req *http.Request) {
 	// automatically close the fastcgi response body at the end .
 	defer resp.Body.Close()
 	// read the fastcgi response headers,
-	// exclude "Xerver-Internal-*" headers from the response,
 	// and apply the actions related to them .
 	for k, v := range resp.Header {
-		if !strings.HasPrefix(k, "Xerver-Internal-") {
-			for i := 0; i < len(v); i++ {
-				if res.Header().Get(k) == "" {
-					res.Header().Set(k, v[i])
-				} else {
-					res.Header().Add(k, v[i])
-				}
+		for i := 0; i < len(v); i++ {
+			if res.Header().Get(k) == "" {
+				res.Header().Set(k, v[i])
+			} else {
+				res.Header().Add(k, v[i])
 			}
 		}
 	}
-	// remove server tokens from the response
-	if resp.Header.Get("Xerver-Internal-ServerTokens") != "off" {
-		res.Header().Set("Server", softwareVersion)
-	}
-	// serve the provided filepath using theinternal fileserver
-	if resp.Header.Get("Xerver-Internal-FileServer") != "" {
-		res.Header().Del("Content-Type")
-		http.ServeFile(res, req, resp.Header.Get("Xerver-Internal-FileServer"))
-		return
-	}
-	// serve the response from another backend "http-proxy"
-	if resp.Header.Get("Xerver-Internal-ProxyPass") != "" {
-		u, e := url.Parse(resp.Header.Get("Xerver-Internal-ProxyPass"))
-		if e != nil {
-			log.Println("err> ", e.Error())
-			http.Error(res, "Invalid internal-proxypass value", 502)
-			return
-		}
-		httputil.NewSingleHostReverseProxy(u).ServeHTTP(res, req)
-		return
-	}
+	res.Header().Set("Server", softwareVersion)
 	// fix the redirect issues by fetching the fastcgi response location header
 	// then redirect the client, then ignore any output .
 	if resp.Header.Get("Location") != "" {
